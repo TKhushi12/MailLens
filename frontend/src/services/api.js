@@ -47,6 +47,11 @@ export const emailAPI = {
     const res = await api.post('/emails/simulate');
     return res.data;
   },
+
+  generateBrief: async (id) => {
+    const res = await api.post(`/emails/${id}/brief`);
+    return res.data;
+  },
 };
 
 export const replyAPI = {
@@ -73,6 +78,11 @@ export const replyAPI = {
 export const analyticsAPI = {
   getMetrics: async () => {
     const res = await api.get('/analytics');
+    return res.data;
+  },
+
+  getAudioBrief: async () => {
+    const res = await api.get('/analytics/audio-brief');
     return res.data;
   },
 };

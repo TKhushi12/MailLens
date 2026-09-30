@@ -59,7 +59,7 @@ const server = app.listen(PORT, () => {
   try {
     await connectDB();
     await seedSampleEmails(false);
-    console.log('[Startup] SmartMail Database ready & initial data loaded.');
+    console.log('[Startup] MailLens Database ready & initial data loaded.');
   } catch (err) {
     console.error('[Startup Error]:', err);
   }

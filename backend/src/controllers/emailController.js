@@ -1,5 +1,5 @@
 import Email from '../models/Email.js';
-import { processEmailWithAI } from '../services/aiService.js';
+import { processEmailWithAI, generateCampaignBrief } from '../services/aiService.js';
 import { seedSampleEmails, simulateSingleIncomingEmail } from '../services/seedService.js';
 
 export const getEmails = async (req, res) => {
@@ -160,6 +160,23 @@ export const deleteEmail = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Email not found' });
     }
     res.json({ success: true, message: 'Email deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const generateBrief = async (req, res) => {
+  try {
+    const email = await Email.findById(req.params.id);
+    if (!email) {
+      return res.status(404).json({ success: false, message: 'Email not found' });
+    }
+
+    const brief = await generateCampaignBrief(email);
+    email.campaignBrief = brief;
+    await email.save();
+
+    res.json({ success: true, data: email.campaignBrief, email });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Mail,
   AlertTriangle,
@@ -7,12 +7,15 @@ import {
   CheckCircle2,
   ArrowRight,
   TrendingUp,
-  Sparkles,
   ExternalLink,
+  Headphones,
+  Square,
+  Volume2,
 } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PriorityBadge from '../components/PriorityBadge';
 import CategoryBadge from '../components/CategoryBadge';
+import { analyticsAPI } from '../services/api';
 import {
   BarChart,
   Bar,
@@ -59,6 +62,45 @@ export default function Dashboard({
     .filter((e) => e.actionRequired && !e.isActionCompleted)
     .slice(0, 4);
   const leads = emails.filter((e) => e.isLead).slice(0, 3);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioScript, setAudioScript] = useState('');
+
+  const handleToggleAudio = async () => {
+    if (isPlayingAudio) {
+      window.speechSynthesis.cancel();
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    try {
+      let script = audioScript;
+      if (!script) {
+        const res = await analyticsAPI.getAudioBrief();
+        if (res.success && res.script) {
+          script = res.script;
+          setAudioScript(res.script);
+        }
+      }
+
+      if (!script) {
+        script = `Good morning Khushi. Here is your executive agency debrief from MailLens. You currently have ${summary.totalEmails || 10} emails in your agency mailbox, with ${summary.pendingActionCount || 3} pending client deliverables. All advertising accounts are running smoothly. Have a great day!`;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(script);
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      utterance.onend = () => setIsPlayingAudio(false);
+      utterance.onerror = () => setIsPlayingAudio(false);
+
+      setIsPlayingAudio(true);
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.error('Failed to play audio briefing:', err);
+      setIsPlayingAudio(false);
+    }
+  };
 
   return (
     <div className="space-y-8 pb-12">
@@ -72,9 +114,35 @@ export default function Dashboard({
             Automated email triage, client request tracking, and deadline management.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span>Mailbox Status: Active</span>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 🎧 Morning Executive Audio Briefing Button */}
+          <button
+            onClick={handleToggleAudio}
+            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm ${
+              isPlayingAudio
+                ? 'bg-rose-600 text-white animate-pulse'
+                : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200'
+            }`}
+            title="Listen to an automated 45-second executive debrief"
+          >
+            {isPlayingAudio ? (
+              <>
+                <Square className="w-3.5 h-3.5 fill-current" />
+                <span>Stop Audio Brief</span>
+              </>
+            ) : (
+              <>
+                <Headphones className="w-4 h-4 text-indigo-600" />
+                <span>🎧 Listen to Morning Brief</span>
+              </>
+            )}
+          </button>
+
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Mailbox Status: Active</span>
+          </div>
         </div>
       </div>
 

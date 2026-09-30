@@ -1,4 +1,5 @@
 import Email from '../models/Email.js';
+import { generateAudioBriefText } from '../services/aiService.js';
 
 export const getDashboardMetrics = async (req, res) => {
   try {
@@ -73,6 +74,32 @@ export const getDashboardMetrics = async (req, res) => {
     });
   } catch (err) {
     console.error('Error computing analytics:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getAudioBrief = async (req, res) => {
+  try {
+    const [totalCount, urgentCount, pendingCount, leadCount, urgentSample, leadSample] = await Promise.all([
+      Email.countDocuments(),
+      Email.countDocuments({ priority: 'Urgent' }),
+      Email.countDocuments({ actionRequired: true, isActionCompleted: false }),
+      Email.countDocuments({ isLead: true }),
+      Email.findOne({ priority: 'Urgent' }).select('subject from'),
+      Email.findOne({ isLead: true }).select('from leadDetails'),
+    ]);
+
+    const script = generateAudioBriefText({
+      totalCount,
+      urgentCount,
+      pendingCount,
+      leadCount,
+      urgentSample: urgentSample ? urgentSample.subject : '',
+      leadSample: leadSample ? `${leadSample.from?.name} for ${leadSample.leadDetails?.serviceInterest || 'services'}` : '',
+    });
+
+    res.json({ success: true, script, urgentCount, pendingCount, leadCount });
+  } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };

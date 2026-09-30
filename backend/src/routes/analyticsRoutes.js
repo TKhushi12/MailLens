@@ -1,8 +1,9 @@
 import express from 'express';
-import { getDashboardMetrics } from '../controllers/analyticsController.js';
+import { getDashboardMetrics, getAudioBrief } from '../controllers/analyticsController.js';
 
 const router = express.Router();
 
 router.get('/', getDashboardMetrics);
+router.get('/audio-brief', getAudioBrief);
 
 export default router;

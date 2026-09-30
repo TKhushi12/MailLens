@@ -8,6 +8,7 @@ import {
   deleteEmail,
   seedDemo,
   simulateIncoming,
+  generateBrief,
 } from '../controllers/emailController.js';
 
 const router = express.Router();
@@ -19,6 +20,7 @@ router.get('/:id', getEmailById);
 router.patch('/:id/read', toggleReadStatus);
 router.patch('/:id/action', toggleActionCompleted);
 router.post('/:id/reprocess', reprocessWithAI);
+router.post('/:id/brief', generateBrief);
 router.delete('/:id', deleteEmail);
 
 export default router;

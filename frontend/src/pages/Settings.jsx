@@ -211,7 +211,7 @@ export default function Settings({
 
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-2 leading-relaxed">
           <p>
-            SmartMail supports both <strong>Live Gemini 1.5 Flash</strong> and an <strong>Internal Heuristic NLP Fallback</strong>.
+            MailLens supports both <strong>Live Gemini 1.5 Flash</strong> and an <strong>Internal Heuristic NLP Fallback</strong>.
           </p>
           <p>
             To use live Gemini API, simply generate a free API key at{' '}

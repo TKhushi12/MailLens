@@ -120,6 +120,41 @@ const emailSchema = new mongoose.Schema(
       friendly: { type: String, default: '' },
       short: { type: String, default: '' },
     },
+
+    // 🚨 Ad Platform Crisis & Auto-Appeal Intelligence
+    policyCrisis: {
+      isSuspension: { type: Boolean, default: false },
+      platform: { type: String, default: '' },
+      accountId: { type: String, default: '' },
+      policyViolated: { type: String, default: '' },
+      estimatedDailyLoss: { type: String, default: '' },
+      appealLetter: { type: String, default: '' },
+    },
+
+    // ⚡ 1-Click Campaign Brief & Creative Tasks
+    campaignBrief: {
+      isGenerated: { type: Boolean, default: false },
+      objective: { type: String, default: '' },
+      targetAudience: { type: String, default: '' },
+      deliverables: [{ type: String }],
+      tasks: [
+        {
+          role: { type: String },
+          task: { type: String },
+        },
+      ],
+      timeline: { type: String, default: '' },
+      budget: { type: String, default: '' },
+    },
+
+    // ⚠️ Scope Creep & Extra-Work Detector
+    scopeCreep: {
+      detected: { type: Boolean, default: false },
+      flaggedItem: { type: String, default: '' },
+      reason: { type: String, default: '' },
+      suggestedUpsellFee: { type: String, default: '$250' },
+      upsellDraft: { type: String, default: '' },
+    },
   },
   {
     timestamps: true,
